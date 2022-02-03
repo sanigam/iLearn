@@ -1,0 +1,2 @@
+gcloud builds submit --tag gcr.io/advance-conduit-336823/dialogflow-spark
+gcloud beta run deploy --image gcr.io/advance-conduit-336823/dialogflow-spark --update-env-vars GOOGLE_APPLICATION_CREDENTIALS=advance-conduit-336823-6488ade1e620.json --memory 1Gi

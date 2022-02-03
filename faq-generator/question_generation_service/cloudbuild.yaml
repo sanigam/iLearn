@@ -1,0 +1,34 @@
+substitutions:
+  _SERVICE_NAME: qa-gen-service
+  _REGION: us-west2
+  _SERVICE_IMG: gcr.io/advance-conduit-336823/qa_gen_service_image:latest
+steps:
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    timeout: 1200s
+    args: ["build", "-t", "$_SERVICE_IMG", "."]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    timeout: 1200s
+    args: ["push", "$_SERVICE_IMG"]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    timeout: 1200s
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "$_SERVICE_NAME"
+      - "--image"
+      - "$_SERVICE_IMG"
+      - "--region"
+      - "$_REGION"
+      - "--platform"
+      - "managed"
+      - "--timeout"
+      - "30m30s"
+images:
+  - "$_SERVICE_IMG"
+timeout: 3600s
+options: # specifying logging options since using a custom service account to build image and push to cloud run
+  logging: CLOUD_LOGGING_ONLY

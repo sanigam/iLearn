@@ -1,0 +1,10 @@
+Flask
+gunicorn
+transformers
+torch
+numpy
+pandas_gbq
+tensorflow
+tensorflow-hub
+
+

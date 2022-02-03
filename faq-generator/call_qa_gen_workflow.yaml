@@ -1,0 +1,33 @@
+# https://cloud.google.com/workflows/docs/run/tutorial-cloud-run
+# https://cloud.google.com/workflows/docs/reference/syntax/iteration
+# https://cloud.google.com/docs/authentication/getting-started
+
+# Make HTTP requests in a for-in loop
+
+- get_new_files:
+    call: http.get
+    args:
+      url: https://us-central1-learn-339101.cloudfunctions.net/question_generation_cloudfunction_getfiles
+      # https://us-west2-advance-conduit-336823.cloudfunctions.net/get_new_files
+    result: new_files_list
+- generateQA:
+    for:
+      value: file_name
+      in: ${new_files_list.body}
+      steps:
+        - post:
+            call: http.post
+            args:
+              url: https://questiongenerationservice-5aorr5lmzq-uw.a.run.app/qa
+              # https://qa-gen-service-j7gz57ef3a-wl.a.run.app/qa
+              headers:
+                Content-type: "application/json"
+              body:
+                text_file: ${file_name}
+                num_questions: 10
+                answer_style: "sentences"
+                use_qa_eval: "True"
+                show_answers: "True"
+                file_location_gcs: "True"
+              timeout: 900
+            result: log_result
